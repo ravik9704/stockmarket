@@ -1,6 +1,5 @@
 package com.example.demo.services;
 
-import com.example.demo.controllers.SuperSimpleStockMarketController;
 import com.example.demo.domain.Stock;
 import com.example.demo.domain.TradeTransaction;
 import com.example.demo.exception.InvalidSuperStockException;
@@ -9,17 +8,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.parser.Entity;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class StockDataServiceImpl implements StockDataService {
-
     Logger logger = LoggerFactory.getLogger(StockDataServiceImpl.class);
-
-
     private LinkedHashMap<String, Stock> stocks;
 
     private LinkedList<TradeTransaction> tradeTransactions;
@@ -32,6 +27,7 @@ public class StockDataServiceImpl implements StockDataService {
     @Override
     public List<String> listStockSymbols() {
         List<String>  allStocks = stocks.keySet().stream().sorted().collect(Collectors.toList());
+        logger.info(" list of all symbols "+allStocks.size());
         return allStocks;
     }
 
@@ -42,6 +38,7 @@ public class StockDataServiceImpl implements StockDataService {
         while (stockIterator.hasNext()) {
             allStocks.add(stocks.get(stockIterator.next()));
         }
+        logger.info(" list of allStocks "+allStocks.size());
         return allStocks;
     }
 
@@ -94,14 +91,13 @@ public class StockDataServiceImpl implements StockDataService {
 
         prev.add(Calendar.MINUTE, - minutes);
         prev.add(Calendar.SECOND, -1);
-
-        // TODO Steams
         while (tradeIterator.hasNext()) {
             TradeTransaction tradeTransaction = tradeIterator.next();
 
             if (tradeTransaction.getTimestamp().after(prev.getTime())
                     && stockSymbol.equals(tradeTransaction.getStockSymbol())) {
-                System.out.println(tradeTransaction);
+                logger.info("tradeTransaction Symbol"+tradeTransaction.getStockSymbol());
+                logger.info("tradeTransaction indicator"+tradeTransaction.getBuySellIndicator());
                 transactionList.add(tradeTransaction);
             }
         }
